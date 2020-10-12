@@ -33,10 +33,16 @@ const deleteUser = async id => {
   const userIndex = users.findIndex(user => user.id === id);
   if (userIndex >= 0) {
     const deletedUser = users.splice(userIndex, 1);
-    console.log(deletedUser[0]);
     return deletedUser[0];
   }
   return undefined;
 };
 
-module.exports = { getAll, getUserById, addNewUser, updateUser, deleteUser };
+module.exports = {
+  getAll,
+  getUserById,
+  addNewUser,
+  updateUser,
+  deleteUser,
+  users
+};
