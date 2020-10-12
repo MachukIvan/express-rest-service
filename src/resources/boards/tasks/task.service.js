@@ -10,13 +10,10 @@ const updateTask = task => tasksRepo.updateTask(task);
 
 const deleteTask = id => tasksRepo.deleteTask(id);
 
-const unnassignUser = userId => tasksRepo.unnassignUser(userId);
-
 module.exports = {
   getAll,
   getTaskById,
   createNewTask,
   updateTask,
-  deleteTask,
-  unnassignUser
+  deleteTask
 };

@@ -46,7 +46,7 @@ router.route('/:id').delete(async (req, res) => {
   const boardId = req.params.id;
   const deletedBoard = await boardsService.deleteBoard(boardId);
   if (deletedBoard) {
-    res.json(deletedBoard);
+    res.sendStatus(204);
   } else {
     res.sendStatus(404);
   }
@@ -100,7 +100,7 @@ router.route('/:id/tasks/:taskId').delete(async (req, res) => {
   const taskId = req.params.taskId;
   const deletedTask = await tasksService.deleteTask(taskId);
   if (deletedTask) {
-    res.json(deletedTask);
+    res.sendStatus(204);
   } else {
     res.sendStatus(404);
   }
