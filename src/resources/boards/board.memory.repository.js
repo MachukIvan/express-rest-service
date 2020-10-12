@@ -30,7 +30,6 @@ const deleteBoard = async id => {
   const boardIndex = boards.findIndex(board => board.id === id);
   if (boardIndex >= 0) {
     const deletedBoard = boards.splice(boardIndex, 1);
-    console.log(deletedBoard);
     return deletedBoard[0];
   }
   return undefined;
@@ -41,6 +40,5 @@ module.exports = {
   getBoardById,
   addNewBoard,
   updateBoard,
-  deleteBoard,
-  boards
+  deleteBoard
 };
