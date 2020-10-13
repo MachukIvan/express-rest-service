@@ -13,7 +13,11 @@ router.route('/').get(async (req, res) => {
 router.route('/:id').get(async (req, res) => {
   const boardId = req.params.id;
   const board = await boardsService.getBoardById(boardId);
-  res.json(board);
+  if (board) {
+    res.json(board);
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 router.route('/').post(async (req, res) => {
@@ -46,6 +50,7 @@ router.route('/:id').delete(async (req, res) => {
   const boardId = req.params.id;
   const deletedBoard = await boardsService.deleteBoard(boardId);
   if (deletedBoard) {
+    await tasksService.deleteRelatedTasks(boardId);
     res.sendStatus(204);
   } else {
     res.sendStatus(404);
@@ -53,54 +58,74 @@ router.route('/:id').delete(async (req, res) => {
 });
 
 router.route('/:id/tasks/').get(async (req, res) => {
-  const tasks = await tasksService.getAll();
+  const boardId = req.params.id;
+  const tasks = await tasksService.getAll(boardId);
   res.json(tasks);
 });
 
-router.route('/:boardId/tasks/:taskId').get(async (req, res) => {
+router.route('/:id/tasks/:taskId').get(async (req, res) => {
+  const boardId = req.params.id;
   const taskId = req.params.taskId;
-  const task = await tasksService.getTaskById(taskId);
+  const task = await tasksService.getTaskById(boardId, taskId);
   res.json(task);
 });
 
 router.route('/:id/tasks/').post(async (req, res) => {
   const boardId = req.params.id;
-  const { columnId, title, order, description, userId } = req.body;
-  const newTask = new Task({
-    id: uuid(),
-    boardId,
-    columnId,
-    title,
-    order,
-    description,
-    userId
-  });
-  await tasksService.createNewTask(newTask);
-  res.json(newTask);
+  const board = await boardsService.getBoardById(boardId);
+  if (board) {
+    const { columnId, title, order, description, userId } = req.body;
+    const newTask = new Task({
+      id: uuid(),
+      boardId,
+      columnId,
+      title,
+      order,
+      description,
+      userId
+    });
+    await tasksService.createNewTask(newTask);
+    res.json(newTask);
+  } else {
+    res.sendStatus(400);
+  }
 });
 
 router.route('/:id/tasks/:taskId').put(async (req, res) => {
+  const boardId = req.params.id;
   const taskId = req.params.taskId;
-  const { title, order, description, userId } = req.body;
-  const updatedTask = await tasksService.updateTask({
-    id: taskId,
-    title,
-    order,
-    description,
-    userId
-  });
-  if (updatedTask) {
-    res.json(updatedTask);
+  const board = await boardsService.getBoardById(boardId);
+  if (board) {
+    const { title, order, description, userId } = req.body;
+    const updatedTask = await tasksService.updateTask({
+      id: taskId,
+      boardId,
+      title,
+      order,
+      description,
+      userId
+    });
+    if (updatedTask) {
+      res.json(updatedTask);
+    } else {
+      res.sendStatus(400);
+    }
   } else {
     res.sendStatus(400);
   }
 });
 
 router.route('/:id/tasks/:taskId').delete(async (req, res) => {
+  const boardId = req.params.id;
   const taskId = req.params.taskId;
-  const deletedTask = await tasksService.deleteTask(taskId);
-  if (deletedTask) {
-    res.sendStatus(204);
+  const board = await boardsService.getBoardById(boardId);
+  if (board) {
+    const deletedTask = await tasksService.deleteTask(boardId, taskId);
+    if (deletedTask) {
+      res.sendStatus(204);
+    } else {
+      res.sendStatus(404);
+    }
   } else {
     res.sendStatus(404);
   }

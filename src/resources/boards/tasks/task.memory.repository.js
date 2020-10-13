@@ -1,12 +1,12 @@
-const tasks = [];
+let tasks = [];
 
-const getAll = async () => {
+const getAll = async boardId => {
   // TODO: mock implementation. should be replaced during task development
-  return tasks;
+  return tasks.filter(task => task.boardId === boardId);
 };
 
-const getTaskById = async id => {
-  return tasks.find(task => task.id === id);
+const getTaskById = async (boardId, taskId) => {
+  return tasks.find(task => task.boardId === boardId && task.id === taskId);
 };
 
 const addNewTask = async task => {
@@ -14,7 +14,9 @@ const addNewTask = async task => {
 };
 
 const updateTask = async task => {
-  const taskIndex = tasks.findIndex(b => b.id === task.id);
+  const taskIndex = tasks.findIndex(
+    t => t.id === task.id && t.boardId === task.boardId
+  );
   if (taskIndex >= 0) {
     const updatedTask = {
       ...tasks[taskIndex],
@@ -26,13 +28,35 @@ const updateTask = async task => {
   return undefined;
 };
 
-const deleteTask = async id => {
-  const taskIndex = tasks.findIndex(task => task.id === id);
-  if (taskIndex >= 0) {
-    const deletedTask = tasks.splice(taskIndex, 1);
-    return deletedTask[0];
-  }
-  return undefined;
+const deleteTask = async (boardId, taskId) => {
+  let deletedTask = null;
+  tasks.forEach((task, i) => {
+    if (task.boardId === boardId && task.id === taskId) {
+      deletedTask = task;
+      tasks.splice(i, 1);
+    }
+  });
+  return deletedTask;
+};
+
+const unassignUser = async userId => {
+  tasks.forEach((task, i) => {
+    if (task.userId === userId) {
+      tasks[i].userId = null;
+    }
+  });
+};
+
+const deleteRelatedTasks = async boardId => {
+  const deletedTasks = [];
+  tasks = tasks.filter(task => {
+    if (task.boardId === boardId) {
+      deletedTasks.push(task);
+      return false;
+    }
+    return true;
+  });
+  return Boolean(deletedTasks.length);
 };
 
 module.exports = {
@@ -40,5 +64,7 @@ module.exports = {
   getTaskById,
   addNewTask,
   updateTask,
-  deleteTask
+  deleteTask,
+  unassignUser,
+  deleteRelatedTasks
 };

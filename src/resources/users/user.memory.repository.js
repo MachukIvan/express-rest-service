@@ -1,4 +1,4 @@
-const users = [];
+let users = [];
 
 const getAll = async () => {
   // TODO: mock implementation. should be replaced during task development
@@ -30,12 +30,15 @@ const updateUser = async user => {
 };
 
 const deleteUser = async id => {
-  const userIndex = users.findIndex(user => user.id === id);
-  if (userIndex >= 0) {
-    const deletedUser = users.splice(userIndex, 1);
-    return deletedUser[0];
-  }
-  return undefined;
+  let deletedUser = null;
+  users = users.filter(user => {
+    if (user.id === id) {
+      deletedUser = user;
+      return false;
+    }
+    return true;
+  });
+  return deletedUser;
 };
 
 module.exports = {
