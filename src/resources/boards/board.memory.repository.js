@@ -1,7 +1,6 @@
-let boards = [];
+const boards = [];
 
 const getAll = async () => {
-  // TODO: mock implementation. should be replaced during task development
   return boards;
 };
 
@@ -23,19 +22,15 @@ const updateBoard = async board => {
     boards[boardIndex] = updatedBoard;
     return updatedBoard;
   }
-  return undefined;
+  return false;
 };
 
 const deleteBoard = async id => {
-  let deletedBoard = null;
-  boards = boards.filter(board => {
-    if (board.id === id) {
-      deletedBoard = board;
-      return false;
-    }
-    return true;
-  });
-  return deletedBoard;
+  const boardIndex = boards.findIndex(board => board.id === id);
+  if (boardIndex >= 0) {
+    return boards.splice(boardIndex, 1)[0];
+  }
+  return false;
 };
 
 module.exports = {

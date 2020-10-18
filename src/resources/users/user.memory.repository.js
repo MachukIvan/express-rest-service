@@ -1,4 +1,4 @@
-let users = [];
+const users = [];
 
 const getAll = async () => {
   // TODO: mock implementation. should be replaced during task development
@@ -10,7 +10,11 @@ const getUserById = async id => {
 };
 
 const addNewUser = async user => {
+  if (!user.name || !user.login || !user.password) {
+    return false;
+  }
   users.push(user);
+  return user;
 };
 
 const updateUser = async user => {
@@ -24,21 +28,17 @@ const updateUser = async user => {
       users[userIndex] = updatedUser;
       return updatedUser;
     }
-    return undefined;
+    return false;
   }
-  return undefined;
+  return false;
 };
 
 const deleteUser = async id => {
-  let deletedUser = null;
-  users = users.filter(user => {
-    if (user.id === id) {
-      deletedUser = user;
-      return false;
-    }
-    return true;
-  });
-  return deletedUser;
+  const userIndex = users.findIndex(user => user.id === id);
+  if (userIndex >= 0) {
+    return users.splice(userIndex, 1)[0];
+  }
+  return false;
 };
 
 module.exports = {

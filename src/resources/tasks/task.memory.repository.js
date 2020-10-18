@@ -1,8 +1,7 @@
-let tasks = [];
+const tasks = [];
 
 const getAll = async boardId => {
-  // TODO: mock implementation. should be replaced during task development
-  return tasks.filter(task => task.boardId === boardId);
+  return tasks.filter(task => task.boardId === boardId) || [];
 };
 
 const getTaskById = async (boardId, taskId) => {
@@ -25,18 +24,17 @@ const updateTask = async task => {
     tasks[taskIndex] = updatedTask;
     return updatedTask;
   }
-  return undefined;
+  return false;
 };
 
 const deleteTask = async (boardId, taskId) => {
-  let deletedTask = null;
-  tasks.forEach((task, i) => {
-    if (task.boardId === boardId && task.id === taskId) {
-      deletedTask = task;
-      tasks.splice(i, 1);
-    }
-  });
-  return deletedTask;
+  const taskIndex = tasks.findIndex(
+    task => task.boardId === boardId && task.id === taskId
+  );
+  if (taskIndex >= 0) {
+    return tasks.splice(taskIndex, 1)[0];
+  }
+  return false;
 };
 
 const unassignUser = async userId => {
@@ -48,15 +46,13 @@ const unassignUser = async userId => {
 };
 
 const deleteRelatedTasks = async boardId => {
-  const deletedTasks = [];
-  tasks = tasks.filter(task => {
-    if (task.boardId === boardId) {
-      deletedTasks.push(task);
-      return false;
-    }
-    return true;
-  });
-  return Boolean(deletedTasks.length);
+  const relatedTasks = tasks.filter(task => task.boardId === boardId);
+  if (relatedTasks.length) {
+    relatedTasks.forEach(task => {
+      const taskIndex = tasks.findIndex(t => t.id === task.id);
+      tasks.splice(taskIndex, 1);
+    });
+  }
 };
 
 module.exports = {
