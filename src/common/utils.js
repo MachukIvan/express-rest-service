@@ -1,3 +1,5 @@
+const uuid = require('uuid');
+
 const catchErrors = fn => async (req, res, next) => {
   try {
     return await fn(req, res, next);
@@ -7,6 +9,12 @@ const catchErrors = fn => async (req, res, next) => {
   }
 };
 
+const assignReqId = (req, res, next) => {
+  req.id = uuid();
+  next();
+};
+
 module.exports = {
-  catchErrors
+  catchErrors,
+  assignReqId
 };
