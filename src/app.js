@@ -14,7 +14,7 @@ const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
 app.use(express.json());
 
-// Loggin incoming requests
+// Logging incoming requests
 morgan.token('id', req => req.id);
 morgan.token('body', req => JSON.stringify(req.body));
 morgan.token('query', req => JSON.stringify(req.query));
@@ -46,14 +46,5 @@ app.use((err, req, res, next) => {
   res.status(500).send(err.message);
   next();
 });
-
-// UncaughtException & unhandledRejection handling done with winston in common/logger.js
-// process.on('uncaughtException', err => {
-//   logger.error(`Uncaught Exception: ${err.message}`);
-// });
-
-// process.on('unhandledRejection', reason => {
-//   logger.error(`Unhandled Rejection: ${reason.message}`);
-// });
 
 module.exports = app;

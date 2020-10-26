@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const Task = require('./task.model');
 const tasksService = require('./task.service');
+const Task = require('./task.model');
 const boardsService = require('../boards/board.service');
 const { catchErrors } = require('../../common/utils');
 
@@ -10,7 +10,7 @@ router
     catchErrors(async (req, res) => {
       const boardId = req.boardId;
       const tasks = await tasksService.getAll(boardId);
-      res.json(tasks);
+      res.json(tasks.map(Task.toResponse));
     })
   )
   .post(
@@ -19,16 +19,16 @@ router
       const board = await boardsService.getBoardById(boardId);
       if (board) {
         const { columnId, title, order, description, userId } = req.body;
-        const newTask = new Task({
+        const taskToCreate = {
           boardId,
           columnId,
           title,
           order,
           description,
           userId
-        });
-        await tasksService.createNewTask(newTask);
-        res.json(newTask);
+        };
+        const createdTask = await tasksService.createNewTask(taskToCreate);
+        res.json(Task.toResponse(createdTask));
       } else {
         res.sendStatus(400);
       }
@@ -43,7 +43,7 @@ router
       const taskId = req.params.id;
       const task = await tasksService.getTaskById(boardId, taskId);
       if (task) {
-        res.json(task);
+        res.json(Task.toResponse(task));
       } else {
         res.sendStatus(404);
       }
@@ -65,7 +65,7 @@ router
           userId
         });
         if (updatedTask) {
-          res.json(updatedTask);
+          res.json(Task.toResponse(updatedTask));
         } else {
           res.sendStatus(400);
         }
@@ -82,7 +82,7 @@ router
       if (board) {
         const deletedTask = await tasksService.deleteTask(boardId, taskId);
         if (deletedTask) {
-          res.json(deletedTask);
+          res.json(Task.toResponse(deletedTask));
         } else {
           res.sendStatus(404);
         }

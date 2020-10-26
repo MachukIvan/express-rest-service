@@ -19,18 +19,18 @@ router
   .get(
     catchErrors(async (req, res) => {
       const boards = await boardsService.getAll();
-      res.json(boards);
+      res.json(boards.map(Board.toResponse));
     })
   )
   .post(
     catchErrors(async (req, res) => {
       const { title, columns } = req.body;
-      const newBoard = new Board({
+      const newBoard = {
         title,
         columns
-      });
-      await boardsService.createNewBoard(newBoard);
-      res.json(newBoard);
+      };
+      const createdBoard = await boardsService.createNewBoard(newBoard);
+      res.json(Board.toResponse(createdBoard));
     })
   );
 
@@ -41,7 +41,7 @@ router
       const boardId = req.params.id;
       const board = await boardsService.getBoardById(boardId);
       if (board) {
-        res.json(board);
+        res.json(Board.toResponse(board));
       } else {
         res.sendStatus(404);
       }
@@ -57,7 +57,7 @@ router
         columns
       });
       if (updatedBoard) {
-        res.json(updatedBoard);
+        res.json(Board.toResponse(updatedBoard));
       } else {
         res.sendStatus(400);
       }
@@ -69,7 +69,7 @@ router
       const deletedBoard = await boardsService.deleteBoard(boardId);
       if (deletedBoard) {
         await tasksService.deleteRelatedTasks(boardId);
-        res.sendStatus(204);
+        res.json(Board.toResponse(deletedBoard));
       } else {
         res.sendStatus(404);
       }

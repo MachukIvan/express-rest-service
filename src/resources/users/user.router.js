@@ -16,11 +16,11 @@ router
   .post(
     catchErrors(async (req, res) => {
       const { name, login, password } = req.body;
-      const newUser = new User({
+      const newUser = {
         name,
         login,
         password
-      });
+      };
       const createdUser = await usersService.createNewUser(newUser);
       if (createdUser) {
         res.json(User.toResponse(createdUser));
