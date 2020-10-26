@@ -41,9 +41,10 @@ app.use('*', (req, res) => {
   res.status(404).send('Page not found');
 });
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   logger.error(err.message);
   res.status(500).send(err.message);
+  next();
 });
 
 // UncaughtException & unhandledRejection handling done with winston in common/logger.js
