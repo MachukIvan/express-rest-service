@@ -13,7 +13,7 @@ const signToken = async (userLogin, password) => {
   const passwordsMatch = await checkHashedPassword(password, hashedPassword);
   if (passwordsMatch) {
     const { id, login } = user;
-    const token = jwt.sign({ id, login }, JWT_SECRET_KEY);
+    const token = jwt.sign({ userId: id, login }, JWT_SECRET_KEY);
     return token;
   }
   return undefined;
