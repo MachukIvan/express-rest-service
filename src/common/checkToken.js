@@ -7,10 +7,16 @@ module.exports = catchErrors((req, res, next) => {
 
   if (authHeader !== undefined) {
     const [type, token] = authHeader.split(' ');
-    if (type === 'Bearer' && jwt.verify(token, JWT_SECRET_KEY)) {
-      return next();
+    if (type === 'Bearer') {
+      try {
+        const verifiedToken = jwt.verify(token, JWT_SECRET_KEY);
+        if (verifiedToken) {
+          return next();
+        }
+      } catch (err) {
+        res.status(401).send();
+      }
     }
-    res.status(401).send();
   }
   res.status(401).send();
 });
