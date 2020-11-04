@@ -1,4 +1,5 @@
 const uuid = require('uuid');
+const bcrypt = require('bcrypt');
 
 const catchErrors = fn => async (req, res, next) => {
   try {
@@ -14,7 +15,17 @@ const assignReqId = (req, res, next) => {
   next();
 };
 
+const hashPassword = async password => {
+  return await bcrypt.hash(password, 10);
+};
+
+const checkHashedPassword = async (password, hash) => {
+  return await bcrypt.compare(password, hash);
+};
+
 module.exports = {
   catchErrors,
-  assignReqId
+  assignReqId,
+  hashPassword,
+  checkHashedPassword
 };

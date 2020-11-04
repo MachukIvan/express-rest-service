@@ -20,10 +20,15 @@ const deleteUser = async id => {
   return User.deleteOne({ _id: id });
 };
 
+const getUserByProps = async props => {
+  return User.findOne(props);
+};
+
 module.exports = {
   getAll,
   getUserById,
   addNewUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  getUserByProps
 };

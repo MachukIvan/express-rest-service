@@ -2,7 +2,7 @@ const router = require('express').Router();
 const User = require('./user.model');
 const usersService = require('./user.service');
 const tasksService = require('../tasks/task.service');
-const { catchErrors } = require('../../common/utils');
+const { catchErrors, hashPassword } = require('../../common/utils');
 
 router
   .route('/')
@@ -16,10 +16,11 @@ router
   .post(
     catchErrors(async (req, res) => {
       const { name, login, password } = req.body;
+      const hashedPassword = await hashPassword(password);
       const newUser = {
         name,
         login,
-        password
+        password: hashedPassword
       };
       const createdUser = await usersService.createNewUser(newUser);
       if (createdUser) {
