@@ -28,6 +28,8 @@ app.use(
   })
 );
 
+app.use(checkToken);
+
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.use('/', (req, res, next) => {
@@ -39,8 +41,8 @@ app.use('/', (req, res, next) => {
 });
 
 app.use('/login', loginRouter);
-app.use('/users', checkToken, userRouter);
-app.use('/boards', checkToken, boardRouter);
+app.use('/users', userRouter);
+app.use('/boards', boardRouter);
 app.use('*', (req, res) => {
   res.status(404).send('Page not found');
 });
